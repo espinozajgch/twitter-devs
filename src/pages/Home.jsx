@@ -2,11 +2,19 @@ import { useEffect, useState } from "react";
 import { firestore } from "../util/firebase";
 import { storage } from "../util/firebase";
 import corazon from "../img/corazon.svg";
-
+import Button from 'react-bootstrap/Button';
+import FormControl from 'react-bootstrap/FormControl';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import { useProtectedContext } from "../context/Protected";
+import { auth } from "../util/firebase";
 
 // import { Route } from "react-router-dom";
 
 const Home = () => {
+
+    const [user, setUser] = useProtectedContext();
 
     const [tweetsState, setTweetsState] = useState([])
     const [tweetMessage, setTweetMessage] = useState("home")
@@ -97,6 +105,7 @@ const Home = () => {
                     likes: doc.data().likes || 0,
                     message: doc.data().tweet,
                     user: doc.data().autor,
+                    uid: doc.data().uid,
                     imagen: doc.data().imagen,
                     id: doc.id
                 }
@@ -122,6 +131,14 @@ const Home = () => {
         getTweets()
     }, []);
 
+    useEffect( () => {
+        auth.onAuthStateChanged((userCredential) =>{
+            //let { uid, email } = userCredential;
+            setUser(userCredential);
+            console.log( userCredential !== null && userCredential.uid);
+        });/** */
+        
+    }, []);/***/
 
     const deleteTweet = (id) => {
         firestore
@@ -163,8 +180,12 @@ const Home = () => {
     }
 
     const handleTweet = () => {
+        console.log("tweet?")
+        
         if(file!==0)
             uploadFile();
+        else
+            createTweet();
     }
 
     const createTweet = () => {
@@ -183,57 +204,79 @@ const Home = () => {
     const handleChange = (e) => {
         let newTweet = {
           ...body,
-          [e.target.name]: e.target.value
+            uid: user.uid,
+           [e.target.name]: e.target.value
         };
         setTweetMessage(e.target.value);
         setBody(newTweet);
+        console.log(newTweet);
     };
+
+    if(user===null){
+        return <p>Not Logged</p>
+    }
 
     return (
         <div>
             
             <h1>Dev's United</h1>
-
-            <div>
-                <div>
-                    <textarea name="tweet" id="" cols="30" rows="5" onChange={handleChange} defaultValue=""></textarea> 
-                </div>
-                <div>
-                    <label>Usuario:</label>
-                    <input onChange={handleChange} type="text" name="autor" />   
-                </div>
+            <h3>Hola {user.email}</h3>
+            <Container>
+            <Row>
+                <Col>
+                    <FormControl as="textarea" aria-label="With textarea" cols="30" rows="5" onChange={handleChange} name="tweet" id=""/>
+                </Col>
+                {/* <div>}
+                    { <label>Usuario:</label> }
+                    <FormControl aria-label="Last name"  onChange={handleChange} type="text" name="autor"/>  
+                {</div> */}
                
-                <div>
+                {/* <div>}
                     <input onChange={HandleUploadFile} type="file" name="files" id="files" accept="image/png, image/gif, image/jpeg" multiple/>
                     { progreso > 0 && <progress id="uploadingfile" max="100" value={progreso}> 70% </progress> }
-                </div>
+                {/* </div> */}
                 <div>
-                    <button onClick={() => handleTweet()}>Twittear</button>
+                    <Button onClick={() => handleTweet()}>Twittear</Button>
                 </div>
-            </div>
-            <div>
+            </Row>
+
+            <Row>
+                <Col className="m-3 pt-2">
                 {
                     tweetsState.map((tweet)=>{
                         return (
-                            <div key={tweet.id}>
+                            <Col className="border p-3 m-1" md={12} key={tweet.id}>
                                 <p>{tweet.message}</p>
-                                <p>{tweet.user}</p>
+                                <p>{user.uid === tweet.uid && user.email}</p>
                                 <div>
                                 { tweet.imagen && <img width="100px" height="100px" src={tweet.imagen} alt={tweet.id} /> }
                                 </div>
-                                <button onClick={() => updateTweet(tweet)}>Actualizar tweet</button>
-                                <button onClick={() => deleteTweet(tweet.id)}>Eliminar tweet</button>
-                                <span onClick={() => checkLikeTweet(tweet)} className="likes">
-                                    <img height="13px" src={corazon} alt="" />
-                                    <span>{tweet.likes}</span>
-                                </span>
-                                <hr />
-                            </div>
+
+                                <Row className="p-2 border">
+                                    <Col md={4}>
+                                        <Button onClick={() => updateTweet(tweet)}>Actualizar tweet</Button>
+                                    </Col>
+
+                                    {user.uid === tweet.uid &&
+                                    <Col md={4}>
+                                        <Button variant="danger" onClick={() => deleteTweet(tweet.id)}>Eliminar tweet</Button>
+                                    </Col>
+                                    }
+                                    <Col md={4}>
+                                        <Button className="border" variant="light" onClick={() => checkLikeTweet(tweet)} >
+                                            <img height="13px" src={corazon} alt="" />
+                                            <span>{tweet.likes}</span>
+                                        </Button>
+                                    </Col>
+                                    
+                                </Row>
+                            </Col>
                         )
                     })
                 }
-            </div>
-            
+                </Col>
+            </Row>
+            </Container>
 
         </div>
     );

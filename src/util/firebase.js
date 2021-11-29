@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/storage';
+import 'firebase/auth';
 
 // Import the functions you need from the SDKs you need
 // import { initializeApp } from "firebase/app";
@@ -22,7 +23,8 @@ const firebaseConfig = {
   measurementId: "G-CP1SG3XPSY"
 };
 
- firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
 
 
 // Initialize Firebase
@@ -30,6 +32,23 @@ const firebaseConfig = {
 // const firebase = getFirestore(app);
 // const analytics = getAnalytics(app);
 
+// modulo de autenticación
+export const auth = firebase.auth();
+
+// proveedor de autenticación
+export const provider = new firebase.auth.GoogleAuthProvider();
+
+// utilidad para hacer login con el popUp
+export const loginConGoogle = () => auth.signInWithPopup(provider);
+
+// utilidad para hacer logOut
+export const logout = () => auth.signOut();
+
+// exporta la funcionalidad de la base de datos
 export const firestore = firebase.firestore();
+
+// exporta la funcionalidad del almacenamiento
 export const storage = firebase.storage();
+
+// exporta el paquete de firebase
 export default firebase;
