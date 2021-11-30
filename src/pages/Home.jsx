@@ -9,6 +9,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useProtectedContext } from "../context/Protected";
 import { auth } from "../util/firebase";
+import { Redirect , Link } from "react-router-dom";
 
 // import { Route } from "react-router-dom";
 
@@ -212,8 +213,9 @@ const Home = () => {
         console.log(newTweet);
     };
 
-    if(user===null){
-        return <p>Not Logged</p>
+    if(!user){
+        // navigate('/home');
+        return <Redirect to='/'></Redirect>
     }
 
     return (

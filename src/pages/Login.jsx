@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-// import { Navigate , Link } from "react-router-dom";
+import { Redirect , Link } from "react-router-dom";
 import { firestore, loginConGoogle, auth, logout } from "../util/firebase";
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
@@ -51,7 +51,7 @@ export default function Login(){
 
     if(user){
         // navigate('/home');
-        //   return <Navigate to='/home'></Navigate>
+        return <Redirect to='/home'></Redirect>
     }
 
     return (
