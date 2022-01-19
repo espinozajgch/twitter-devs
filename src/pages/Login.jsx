@@ -7,34 +7,50 @@ import { useProtectedContext } from "../context/Protected";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
-
-// import { useNavigate } from "react-router-dom";
+import Spinner from 'react-bootstrap/Spinner';
 
 export default function Login(){
 
-    // let navigate = useNavigate();
-
     const [user, setUser] = useProtectedContext();
 
-    //const [user, setUser] = useState(null);
+    const [estiloOculto, setEstiloOculto] = useState(true);
+    const [disabledButton, setDisabledButton] = useState(false);
+    const [show, setShow] = useState(false);
     const [pass, setPass] = useState("");
     const [email, setEmail] = useState("");
 
     const handleChange = () =>{
-        console.log("login");
+        
         //loginConGoogle();
 
-        auth
-        .signInWithEmailAndPassword(email,pass)
-        .then((userCredential) => {
-            //console.log(userCredential.user)
-            let { uid, email } = userCredential.user;
-            setUser({ "uid":uid, "email":email });
-            //console.log(user);
-            
-        })
-        .catch((err) => console.error(err.message));/** */
+        setEstiloOculto(false);
+        setDisabledButton(true);
+
+        if(email != "" && pass.length > 0){
+            auth
+            .signInWithEmailAndPassword(email,pass)
+            .then((userCredential) => {
+                let { uid, email } = userCredential.user;
+                setUser({ "uid":uid, "email":email }); 
+                setShow(false);
+                setEstiloOculto(true);
+                setDisabledButton(false);
+            })
+            .catch((err) => { 
+                console.error(err.message);
+                setShow(true);
+                setEstiloOculto(true);
+                setDisabledButton(false);
+                }
+            );/** */
+        }
+        else{
+            setShow(true);
+            setEstiloOculto(true);
+            setDisabledButton(false);
+        }
     }
 
     const handleChangePass = (e) => {
@@ -55,7 +71,6 @@ export default function Login(){
     }, []);/***/
 
     if(user){
-        // navigate('/home');
         return <Redirect to='/home'></Redirect>
     }
 
@@ -67,10 +82,8 @@ export default function Login(){
                 <h2>Login</h2>
                     <Container className="">
                         <Row className="white centered">
-                            {/* <form className="custom-form"> */}
                             <Col md={12}>
-                                <FloatingLabel /*controlId="floatingInput"*/ label="Email address" className="mb-3">
-                                {/* <Form.Control type="email" placeholder="name@example.com" /> */}
+                                <FloatingLabel label="Email address" className="mb-3">
                                 <FormControl
                                     id="email"
                                     placeholder="email"
@@ -82,7 +95,7 @@ export default function Login(){
                                 </FloatingLabel>
                             </Col>
                             <Col md={12}>
-                                <FloatingLabel /*controlId="floatingPassword"*/ label="Password">
+                                <FloatingLabel label="Password">
                                     <FormControl
                                         id="pass"
                                         placeholder="password"
@@ -94,14 +107,26 @@ export default function Login(){
                                 </FloatingLabel>
                             </Col>
 
-                            <div className="pt-2 d-grid gap-2">
-                                <Button onClick={handleChange} id="btn" className="btn" size="lg">Login</Button>
-                            </div>
-                            {/* <Button onClick={logout} id="btnOut" className="btn">Logout</Button> */}
-                            {/* </form> */}
-
-                            <Col className="pt-4">
-                                {/* { user !== null && <h1>Loggin Exitoso</h1>} */}
+                            <Col md={12} className="pt-2 d-grid gap-2">
+                                <Button onClick={handleChange} id="btn" className="btn" size="lg" disabled={disabledButton}>
+                                    <Spinner
+                                        as="span"
+                                        animation="border"
+                                        size="sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                        className={`visually-${estiloOculto ? "hidden" : ""}`}
+                                    />    
+                                    
+                                    Login
+                                </Button>
+                            </Col>
+                            <Col md={12} className="pt-2 d-grid gap-2">
+                                <Alert  show={show} variant="danger" onClose={() => setShow(false)} dismissible>
+                                    Usuario y/o clave invalidos
+                                </Alert>
+                            </Col>
+                            <Col className="pt-2">
                                 <Link to ="/signup">Crear una cuenta</Link>
                             </Col>
                         </Row>

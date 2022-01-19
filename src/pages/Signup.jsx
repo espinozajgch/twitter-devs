@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import { firestore, auth } from "../util/firebase";
 import { useEffect, useState } from "react";
@@ -7,39 +7,42 @@ import { useProtectedContext } from "../context/Protected";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Spinner from 'react-bootstrap/Spinner';
 
 export default function Signup(){
+
+    const [estiloOculto, setEstiloOculto] = useState(true);
+    const [disabledButton, setDisabledButton] = useState(false);
 
     const [name, setName] = useState("");
     const [pass, setPass] = useState("");
     const [email, setEmail] = useState("");
+    const [show, setShow] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const [user, setUser] = useProtectedContext();
 
     const handleChangeName = (e) => {
         setName(e.target.value)
+        setShow(false);
     };
 
     const handleChangePass = (e) => {
         setPass(e.target.value)
+        setShow(false);
     };
 
     const handleChangeEmail = (e) => {
         setEmail(e.target.value)
+        setShow(false);
     };
 
-    /*const handleChange = (e) => {
-        let newUser = {
-          ...user,
-          [e.target.name]: e.target.value
-        };
-        setUser(newUser);
-        console.log(user);
-    };*/
-
     const createUser = () => {
-        
+    
+        setEstiloOculto(false);
+        setDisabledButton(true);
 
         auth
         .createUserWithEmailAndPassword(email,pass)
@@ -52,9 +55,15 @@ export default function Signup(){
             };/**/
             saveUser(newUser);
             setUser(newUser);
-            //console.log(userCredential.user)
         })
-        .catch((err) => console.error(err.message));/** */
+        .catch((err) => { 
+            console.error(err.message);
+            setShow(true);
+            setShowSuccess(false);
+            setEstiloOculto(true);
+            setDisabledButton(false);
+            }
+        );
 
         
     }
@@ -65,15 +74,30 @@ export default function Signup(){
             .add(newUser)
             .then(() => {
                 console.log("Usuario Registrado");
+                setShow(false);
+                setShowSuccess(true);
                 restart();
+                setEstiloOculto(true);
+                setDisabledButton(false);
             })
-            .catch((err) => console.error(err.message));/** */
+            .catch((err) => { 
+                console.error(err.message);
+                setShow(true);
+                setShowSuccess(false);
+                setEstiloOculto(true);
+                setDisabledButton(false);
+                }
+            );
     }
 
     const restart = () =>{
         setName("");
         setPass("");
         setEmail("");
+    }
+
+    if(user){
+        return <Redirect to='/home'></Redirect>
     }
 
     return (
@@ -123,8 +147,27 @@ export default function Signup(){
                                     </div>
                                     
                                     <div className="pt-2 d-grid gap-2">
-                                        <Button variant="primary" size="lg" onClick={() => createUser()}>Crear Cuenta</Button>
+                                        <Button variant="primary" size="lg" onClick={() => createUser()} disabled={disabledButton}>
+                                            
+                                            <Spinner
+                                                as="span"
+                                                animation="border"
+                                                size="sm"
+                                                role="status"
+                                                aria-hidden="true"
+                                                className={`visually-${estiloOculto ? "hidden" : ""}`}
+                                            />
+                                            Crear Cuenta
+                                        </Button>
                                     </div>
+                                    <Col md={12} className="pt-2 d-grid gap-2">
+                                        <Alert  show={show} variant="danger" onClose={() => setShow(false)} dismissible>
+                                            Existen campos vacios
+                                        </Alert>
+                                        <Alert  show={showSuccess} variant="success" onClose={() => setShowSuccess(false)} dismissible>
+                                            Registro Exitoso
+                                        </Alert>
+                                    </Col>
                                 </form>
 
                                 <Col className="pt-4">

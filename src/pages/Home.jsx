@@ -405,9 +405,6 @@ const Home = () => {
                     </Row>
 
                     <Row className="pt-2 mt-4">
-                        <Spinner className="visually-hidden"  animation="border" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </Spinner>
                         {/* <Col md={12} className="m-3 pt-2"> */}
                         {
                             tweetsState.map((tweet)=>{
