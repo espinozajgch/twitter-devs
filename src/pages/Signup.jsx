@@ -110,7 +110,7 @@ export default function Signup(){
                             <div className="white centered">
                                 <form action="/haciaAlgunLugar" className="custom-form">
                                     <div>
-                                        <FloatingLabel controlId="floatingInput" label="username" className="mb-3">   
+                                        <FloatingLabel label="username" className="mb-3">   
                                         <FormControl
                                             id="nombre"
                                             placeholder="username"
@@ -122,7 +122,7 @@ export default function Signup(){
                                         </FloatingLabel>
                                     </div>
                                     <div>
-                                        <FloatingLabel controlId="floatingInput" label="Email address" className="mb-3">    
+                                        <FloatingLabel label="Email address" className="mb-3">    
                                         <FormControl
                                             id="email"
                                             placeholder="email"
@@ -134,7 +134,7 @@ export default function Signup(){
                                         </FloatingLabel>
                                     </div>
                                     <div>
-                                        <FloatingLabel controlId="floatingPassword" label="Password">
+                                        <FloatingLabel label="Password">
                                         <FormControl
                                             id="pass"
                                             placeholder="password"

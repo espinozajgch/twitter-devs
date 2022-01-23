@@ -44,13 +44,13 @@ export default function Login(){
                 setEstiloOculto(true);
                 setDisabledButton(false);
                 }
-            );/** */
+            );
         }
         else{
             setShow(true);
             setEstiloOculto(true);
             setDisabledButton(false);
-        }
+        }/***/
     }
 
     const handleChangePass = (e) => {
@@ -64,8 +64,16 @@ export default function Login(){
     useEffect( () => {
         auth.onAuthStateChanged((userCredential) =>{
             //let { uid, email } = userCredential;
-            setUser(userCredential);
-            //console.log( userCredential !== null && userCredential.uid);
+            if(userCredential !== null){
+                setUser(userCredential);
+            }
+            else{
+                setShow(false);
+                setEstiloOculto(true);
+                setDisabledButton(false);
+            }
+
+            console.log( userCredential !== null && userCredential);
         });/** */
         
     }, []);/***/
@@ -128,6 +136,14 @@ export default function Login(){
                             </Col>
                             <Col className="pt-2">
                                 <Link to ="/signup">Crear una cuenta</Link>
+                            </Col>
+                            <Col md={12} className="pt-2">
+                                <p>o</p>
+                            </Col>
+                            <Col md={12} className="">
+                                <Button variant="link" onClick={loginConGoogle} id="btn" className="btn" size="lg">
+                                    Iniciar con Google
+                                </Button>
                             </Col>
                         </Row>
                     </Container>
