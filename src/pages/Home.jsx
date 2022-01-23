@@ -48,7 +48,7 @@ const Home = () => {
                     id: doc.id
                 }
             })
-            console.log(tweets)
+            //console.log(tweets)
             setTweetsState(tweets);
         })
 
@@ -148,7 +148,7 @@ const Home = () => {
     return (
         <Container>
             <ModalClose setShow={setShow} show={show} getTweets={getTweets} handleClose={handleClose} tweetId={tweetId} />
-            <Header/>
+            <Header logo={user.photoURL}/>
 
             <Row>
                 <Col className="border-top" md={3}></Col>
@@ -164,7 +164,7 @@ const Home = () => {
                             Di lo que piensa en un maximo de {max} caracteres
                         </Form.Text>                  
                         <Col md={12} className="pt-2 d-grid gap-2">
-                            <Button size="lg" onClick={() => handleTweet()} disabled={disabledButton}>
+                            <Button variant="success" size="lg" onClick={() => handleTweet()} disabled={disabledButton}>
                                 
                                 <Spinner
                                     as="span"
@@ -174,8 +174,8 @@ const Home = () => {
                                     aria-hidden="true"
                                     className={`visually-${estiloOculto ? "hidden" : ""}`}
                                 />
-                                
-                                Twittear
+            
+                                Postear
                             </Button>
                         </Col>
                     </Row>

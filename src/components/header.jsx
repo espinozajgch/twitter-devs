@@ -12,8 +12,9 @@ import Row from 'react-bootstrap/Row';
 import { Redirect } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { auth } from "../util/firebase";
+import corazon from "../img/corazon.svg"
 
-function Header(){
+function Header(props){
 
     const [user, setUser] = useProtectedContext();
 
@@ -27,7 +28,10 @@ function Header(){
         <Row>          
             <Navbar /*bg="light"/**/ expand="lg" sticky="top">
             <Container fluid>
-                <Navbar.Brand href="#">Dev's United </Navbar.Brand>
+                <Navbar.Brand href="#">Dev's United 
+                
+                <img height="25px" src={props.logo} alt="" className="rounded-pill" /> 
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll" className="justify-content-end">
                     
