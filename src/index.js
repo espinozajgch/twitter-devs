@@ -3,13 +3,17 @@ import ReactDOM from 'react-dom';
 import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {BrowserRouter as Router} from "react-router-dom";
+import {BrowserRouter} from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import ProtectedContext from './context/Protected';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Router>
-    <App />
-    </Router>
+    <BrowserRouter>
+      <ProtectedContext>
+        <App />
+      </ProtectedContext>  
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
